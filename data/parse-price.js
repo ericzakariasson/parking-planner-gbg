@@ -1,5 +1,3 @@
-import { ParkingPrice } from "./types"
-
 const normalPricePerHourRegex = /(\d{1,2})\s?kr\/?\s?tim|timma|timme alla dagar (\d{1,2})-(\d{1,2})/
 const otherPricePerHourRegex = /övrig tid (\d{1,2})\s?kr\s?\/\s?tim/
 const dayPriceRegex = /(\d{1,2})\s?kr\/\s?dygn|dag/
@@ -8,8 +6,8 @@ const shortPricePerHourRegex = /(\d{1,2})\s?kr\/?\s?tim./
 
 const parkingLicenseRequiredRegex = /P-till\s?stånd erfordras/
 
-export const parsePrice = (rawPriceStr: string) => {
-  const price: ParkingPrice = { hour: {}, day: null, other: "" }
+exports.parsePrice = rawPriceStr => {
+  const price = { hour: {}, day: null, other: "" }
 
   if (!rawPriceStr || rawPriceStr === null) {
     return price
