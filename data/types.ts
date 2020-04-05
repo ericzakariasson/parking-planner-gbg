@@ -16,17 +16,23 @@ interface Location {
   lng: number
 }
 
+interface Spots {
+  total: number
+}
+
 export interface ParkingArea {
   parkingId: string
   name: string
   location: Location
   price: ParkingPrice
+  spots: Spots
   url: string
 }
 
 export interface ParkingAreaRaw {
   id: string
   title: string
+  amountOfSpots: string
   lat: number
   lng: number
   type: "P-hus/tomt"

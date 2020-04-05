@@ -19,6 +19,9 @@ exports.sourceNodes = async ({
         lng: parkingArea.lng,
       },
       price: parsePrice(parkingArea.regularPrice),
+      spots: {
+        total: parseInt(parkingArea.amountOfSpots),
+      },
       url: parkingArea.url,
     }))
 

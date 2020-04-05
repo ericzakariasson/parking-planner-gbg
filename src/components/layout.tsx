@@ -2,22 +2,7 @@ import React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import styled from "styled-components"
 
-import "./layout.css"
 import { SEO } from "./seo"
-
-const Wrapper = styled.div`
-  max-width: 60rem;
-  margin: 0 auto;
-  padding: 0 2rem;
-`
-
-const Header = styled.header`
-  padding: 1rem 0;
-`
-
-const SiteTitle = styled.h1`
-  font-size: 1rem;
-`
 
 interface LayoutProps {
   title: string
@@ -34,14 +19,18 @@ export const Layout: React.FC<LayoutProps> = ({ children, title }) => {
     }
   `)
 
+  const [bold, normal] = site.siteMetadata.title.split(" ")
+
   return (
-    <Wrapper>
+    <div className="max-w-4xl mx-auto px-4 py-6">
       <SEO title={title} />
-      <Header>
-        <SiteTitle>{site.siteMetadata.title}</SiteTitle>
-      </Header>
+      <header className="py-2">
+        <h1 className="text-2xl">
+          <span className="font-semibold">{bold}</span> {normal}
+        </h1>
+      </header>
       <main>{children}</main>
       <footer></footer>
-    </Wrapper>
+    </div>
   )
 }
