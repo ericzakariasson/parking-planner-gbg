@@ -22,7 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, title }) => {
   const [bold, normal] = site.siteMetadata.title.split(" ")
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6 bg-gray-100">
       <SEO title={title} />
       <header className="py-2">
         <h1 className="text-2xl">
