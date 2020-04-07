@@ -1,34 +1,60 @@
 import * as React from "react"
-
+import { Input } from "../components/input"
 import { Layout } from "../components/layout"
+import { ParkingAreaItem } from "../components/parking-area-item"
+import { parkingAreaQuery } from "../graphql/queries/parking-area.query"
+import { useFilteredParkingAreas } from "../hooks/useFilteredParkingAreas"
+import { ParkingArea, ParkingAreaWithPrice } from "../../data/types"
 
-function parseTime(value: string) {
-  const [hourStr, minuteStr] = value.split(":")
-  const hour = parseInt(hourStr)
-  const minute = parseInt(minuteStr)
-  return hour + minute / 60
+interface SelectOption<TValue> {
+  value: TValue
+  label: string
 }
 
-const inputStyle =
-  "block shadow border rounded leading-tight py-3 px-4 w-full appearance-none focus:outline-none focus:shadow-outline"
+enum SortProperty {
+  Name = "Name",
+  Price = "Price",
+  Distance = "Distance",
+}
+
+enum SortDirection {
+  Asc = "Asc",
+  Desc = "Desc",
+}
+
+const sortOptions: SelectOption<SortProperty>[] = [
+  {
+    value: SortProperty.Name,
+    label: "Namn",
+  },
+  {
+    value: SortProperty.Price,
+    label: "Pris",
+  },
+  {
+    value: SortProperty.Distance,
+    label: "Avstånd",
+  },
+]
 
 const IndexPage = () => {
-  const [startTime, setStartTime] = React.useState("")
-  const [endTime, setEndTime] = React.useState("")
+  const [startTime, setStartTime] = React.useState("08:00")
+  const [endTime, setEndTime] = React.useState("17:00")
+  const [searchTerm, setSearchTerm] = React.useState("")
 
-  const start = parseTime(startTime)
-  const end = parseTime(endTime)
+  const [sortProperty, setSortProperty] = React.useState(SortProperty.Price)
+  const [sortDirection, setSortDirection] = React.useState(SortDirection.Asc)
 
-  const duration = end - start
-  const minuteDuration = Math.round((duration % 1) * 60)
-  const hourDuration = duration - (duration % 1)
+  const { filtered } = useFilteredParkingAreas(startTime, endTime, {
+    searchTerm,
+  })
 
   return (
-    <Layout title="Home">
+    <Layout title="Parkering GBG">
       <div className="mb-2">
         <p>Hur länge ska du parkera?</p>
       </div>
-      <div className="flex">
+      <div className="flex mb-4">
         <div className="w-full w-1/2 mr-6">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -36,13 +62,12 @@ const IndexPage = () => {
           >
             Från
           </label>
-          <input
-            className={inputStyle}
+          <Input
             id="from-time"
             type="time"
             placeholder="08:00"
             value={startTime}
-            onChange={e => setStartTime(e.target.value)}
+            onChange={value => setStartTime(value)}
           />
         </div>
         <div className="w-full w-1/2">
@@ -52,20 +77,63 @@ const IndexPage = () => {
           >
             Till
           </label>
-          <input
-            className={inputStyle}
+          <Input
             id="to-time"
             type="time"
             placeholder="17:00"
             value={endTime}
-            onChange={e => setEndTime(e.target.value)}
+            onChange={value => setEndTime(value)}
           />
         </div>
       </div>
-      <h1>Hours: {hourDuration}</h1>
-      <h1>minute: {minuteDuration}</h1>
+      <div className="mb-4">
+        <label
+          className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+          htmlFor="search-term-input"
+        >
+          Sök parkering
+        </label>
+        <Input
+          value={searchTerm}
+          onChange={value => setSearchTerm(value)}
+          id="search-term-input"
+        />
+      </div>
+      <div>
+        <select
+          value={sortProperty}
+          onChange={e => setSortProperty(e.target.value as SortProperty)}
+        >
+          {sortOptions.map(o => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <section>
+        {filtered.sort(sortParking(sortProperty, sortDirection)).map(item => (
+          <ParkingAreaItem key={item.id} {...item} />
+        ))}
+      </section>
     </Layout>
   )
+}
+
+const sortParking = (
+  sortProperty: SortProperty,
+  sortDirection: SortDirection
+) => (x: ParkingAreaWithPrice, y: ParkingAreaWithPrice) => {
+  const a = sortDirection === SortDirection.Desc ? y : x
+  const b = sortDirection === SortDirection.Desc ? x : y
+  switch (sortProperty) {
+    case SortProperty.Price:
+      return a.totalPrice - b.totalPrice
+    case SortProperty.Name:
+      return a.name.localeCompare(b.name)
+    default:
+      return 0
+  }
 }
 
 export default IndexPage
