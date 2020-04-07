@@ -1,41 +1,11 @@
 import * as React from "react"
+import { ParkingAreaWithPrice } from "../../data/types"
 import { Input } from "../components/input"
 import { Layout } from "../components/layout"
 import { ParkingAreaItem } from "../components/parking-area-item"
-import { parkingAreaQuery } from "../graphql/queries/parking-area.query"
 import { useFilteredParkingAreas } from "../hooks/useFilteredParkingAreas"
-import { ParkingArea, ParkingAreaWithPrice } from "../../data/types"
-
-interface SelectOption<TValue> {
-  value: TValue
-  label: string
-}
-
-enum SortProperty {
-  Name = "Name",
-  Price = "Price",
-  Distance = "Distance",
-}
-
-enum SortDirection {
-  Asc = "Asc",
-  Desc = "Desc",
-}
-
-const sortOptions: SelectOption<SortProperty>[] = [
-  {
-    value: SortProperty.Name,
-    label: "Namn",
-  },
-  {
-    value: SortProperty.Price,
-    label: "Pris",
-  },
-  {
-    value: SortProperty.Distance,
-    label: "Avstånd",
-  },
-]
+import { SortDirection, sortOptions, SortProperty } from "../utils/parking"
+import { ArrowIcon } from "../components/icon"
 
 const IndexPage = () => {
   const [startTime, setStartTime] = React.useState("08:00")
@@ -99,10 +69,11 @@ const IndexPage = () => {
           id="search-term-input"
         />
       </div>
-      <div>
+      <div className="w-1/2 inline-flex bg-gray-200 mb-4 rounded items-center overflow-hidden">
         <select
           value={sortProperty}
           onChange={e => setSortProperty(e.target.value as SortProperty)}
+          className="text-gray-700 block flex-grow appearance-none bg-transparent leading-tight py-3 pl-4 pr-2"
         >
           {sortOptions.map(o => (
             <option key={o.value} value={o.value}>
@@ -110,6 +81,20 @@ const IndexPage = () => {
             </option>
           ))}
         </select>
+        <div className="py-3 px-3 bg-gray-300">
+          <ArrowIcon
+            className="text-gray-700"
+            size={18}
+            onClick={() =>
+              setSortDirection(direction =>
+                direction === SortDirection.Asc
+                  ? SortDirection.Desc
+                  : SortDirection.Asc
+              )
+            }
+            direction={sortDirection === SortDirection.Asc ? "up" : "down"}
+          />
+        </div>
       </div>
       <section>
         {filtered.sort(sortParking(sortProperty, sortDirection)).map(item => (
