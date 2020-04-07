@@ -1,4 +1,4 @@
-const normalPricePerHourRegex = /(\d{1,2})\s?kr\/?\s?tim|timma|timme alla dagar (\d{1,2})-(\d{1,2})/
+const normalPricePerHourRegex = /(\d{1,2})\s?kr\/?\s?(tim|timma|timme) alla dagar (\d{1,2})-(\d{1,2})/
 const otherPricePerHourRegex = /övrig tid (\d{1,2})\s?kr\s?\/\s?tim/
 const dayPriceRegex = /(\d{1,2})\s?kr\/\s?dygn|dag/
 
@@ -38,6 +38,7 @@ exports.parsePrice = rawPriceStr => {
     const [
       ,
       normalPricePerHourMatch,
+      ,
       normalPricePerHourStartMatch,
       normalPricePerHourEndMatch,
     ] = normalMatch

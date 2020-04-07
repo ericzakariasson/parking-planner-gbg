@@ -33,7 +33,7 @@ exports.sourceNodes = async ({
         children: [],
         internal: {
           type: `ParkingArea`,
-          mediaType: `text/html`,
+          mediaType: `application/json`,
           content: JSON.stringify(a),
           contentDigest: createContentDigest(a),
         },
@@ -57,7 +57,7 @@ exports.sourceNodes = async ({
       children: [],
       internal: {
         type: `ParkingAreaCoverage`,
-        mediaType: `text/html`,
+        mediaType: `applicati/html`,
         contentDigest: createContentDigest(coverage.toString()),
       },
     }
