@@ -1,11 +1,17 @@
 import { parseInputTypeTime, calculateAreaPriceInTimespan } from "../utils/time"
 import { useStaticQuery, graphql } from "gatsby"
 import { ParkingArea, ParkingAreaWithPrice } from "../../data/types"
+import { SortProperty, SortDirection, sortParking } from "../utils/parking"
 
 type ParkingAreaQueryData = {
   allParkingArea: {
     nodes: ParkingArea[]
   }
+}
+
+interface PakringSort {
+  sortProperty: SortProperty
+  sortDirection: SortDirection
 }
 
 interface ParkingFilter {
@@ -15,7 +21,8 @@ interface ParkingFilter {
 export function useFilteredParkingAreas(
   startTime: string,
   endTime: string,
-  filter: ParkingFilter
+  filter: ParkingFilter,
+  sort: PakringSort
 ) {
   const data = useStaticQuery<ParkingAreaQueryData>(graphql`
     query {
@@ -81,6 +88,8 @@ export function useFilteredParkingAreas(
         x.totalPrice > 0 &&
         x.name.toLowerCase().includes(filter.searchTerm.toLowerCase())
     )
+    .sort(sortParking(sort.sortProperty, sort.sortDirection))
+    .slice(0, 10)
 
   return { filtered: filteredParkingAreaItems }
 }

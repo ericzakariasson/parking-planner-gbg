@@ -1,6 +1,6 @@
 const normalPricePerHourRegex = /(\d{1,2})\s?kr\/?\s?(tim|timma|timme) alla dagar (\d{1,2})-(\d{1,2})/
 const otherPricePerHourRegex = /övrig tid (\d{1,2})\s?kr\s?\/\s?tim/
-const dayPriceRegex = /(\d{1,2})\s?kr\/\s?dygn|dag/
+const dayPriceRegex = /(\d+)\s?kr\s?\/(dygn|dag)/i
 
 const shortPricePerHourRegex = /(\d{1,2})\s?kr\/?\s?tim./
 
@@ -74,5 +74,6 @@ exports.parsePrice = rawPriceStr => {
 
   price.debug = priceStr
 
+  console.log(price)
   return price
 }

@@ -1,11 +1,10 @@
 import * as React from "react"
-import { ParkingAreaWithPrice } from "../../data/types"
+import { ArrowIcon } from "../components/icon"
 import { Input } from "../components/input"
 import { Layout } from "../components/layout"
 import { ParkingAreaItem } from "../components/parking-area-item"
 import { useFilteredParkingAreas } from "../hooks/useFilteredParkingAreas"
 import { SortDirection, sortOptions, SortProperty } from "../utils/parking"
-import { ArrowIcon } from "../components/icon"
 
 const IndexPage = () => {
   const [startTime, setStartTime] = React.useState("08:00")
@@ -15,9 +14,14 @@ const IndexPage = () => {
   const [sortProperty, setSortProperty] = React.useState(SortProperty.Price)
   const [sortDirection, setSortDirection] = React.useState(SortDirection.Asc)
 
-  const { filtered } = useFilteredParkingAreas(startTime, endTime, {
-    searchTerm,
-  })
+  const { filtered } = useFilteredParkingAreas(
+    startTime,
+    endTime,
+    {
+      searchTerm,
+    },
+    { sortDirection, sortProperty }
+  )
 
   return (
     <Layout title="Parkering GBG">
@@ -97,28 +101,12 @@ const IndexPage = () => {
         </div>
       </div>
       <section>
-        {filtered.sort(sortParking(sortProperty, sortDirection)).map(item => (
+        {filtered.map(item => (
           <ParkingAreaItem key={item.id} {...item} />
         ))}
       </section>
     </Layout>
   )
-}
-
-const sortParking = (
-  sortProperty: SortProperty,
-  sortDirection: SortDirection
-) => (x: ParkingAreaWithPrice, y: ParkingAreaWithPrice) => {
-  const a = sortDirection === SortDirection.Desc ? y : x
-  const b = sortDirection === SortDirection.Desc ? x : y
-  switch (sortProperty) {
-    case SortProperty.Price:
-      return a.totalPrice - b.totalPrice
-    case SortProperty.Name:
-      return a.name.localeCompare(b.name)
-    default:
-      return 0
-  }
 }
 
 export default IndexPage
